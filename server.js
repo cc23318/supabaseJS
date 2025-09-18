@@ -225,7 +225,7 @@ app.delete('/images/:id', async (req, res) => {
 
   } catch (error) {
     console.error('Erro ao deletar imagem:', error);
-    res.status(500).json({ error: 'Erro ao deletar imagem' });
+    res.status(500).json({ error: 'Erro ao deletar imagem.' });
   }
 });
 
