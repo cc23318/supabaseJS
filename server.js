@@ -190,11 +190,10 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 // Rota para deletar imagem
 app.delete('/images/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(`Iniciando exclusão da imagem ${id}`);
+  const { id } = req.params;
 
-    // Busca a imagem no banco para pegar o caminho do arquivo
+  try {
+    // Busca a imagem na tabela para pegar o caminho no storage
     const { data: image, error: fetchError } = await supabase
       .from('images')
       .select('url')
@@ -205,49 +204,28 @@ app.delete('/images/:id', async (req, res) => {
       return res.status(404).json({ error: 'Imagem não encontrada' });
     }
 
-    console.log(`Deletando arquivo do storage: ${image.url}`);
-
     // Remove do storage
-    const { error: deleteStorageError } = await supabase
-      .storage
+    const { error: storageError } = await supabase.storage
       .from('imagens')
       .remove([image.url]);
 
-    if (deleteStorageError) {
-      console.error('Erro ao deletar do storage:', deleteStorageError);
+    if (storageError) {
+      console.error('Erro ao remover do storage:', storageError);
     }
 
-    // Remove do banco de dados
-    const { error: deleteDbError } = await supabase
+    // Remove do banco
+    const { error: deleteError } = await supabase
       .from('images')
       .delete()
       .eq('id', id);
 
-    if (deleteDbError) throw deleteDbError;
+    if (deleteError) throw deleteError;
 
-    // Remove da tabela metadata também
-    try {
-      const { error: deleteMetadataError } = await supabase
-        .from('images_metadata')
-        .delete()
-        .eq('file_path', image.url);
-
-      if (deleteMetadataError) {
-        console.warn('Erro ao deletar metadata:', deleteMetadataError);
-      }
-    } catch (metadataError) {
-      console.warn('Erro ao deletar metadata:', metadataError);
-    }
-
-    console.log(`Imagem ${id} excluída com sucesso`);
-    res.status(200).json({ success: true });
+    res.status(200).json({ message: 'Imagem deletada com sucesso' });
 
   } catch (error) {
-    console.error('Erro ao excluir imagem:', error);
-    res.status(500).json({ 
-      error: 'Erro ao excluir imagem',
-      details: error.message 
-    });
+    console.error('Erro ao deletar imagem:', error);
+    res.status(500).json({ error: 'Erro ao deletar imagem' });
   }
 });
 
