@@ -156,9 +156,10 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   }
 });
 
-// Rota para deletar imagem
+// Rota para deletar imagem - ADICIONE LOGS
 app.delete('/images/:id', async (req, res) => {
   const { id } = req.params;
+  console.log(`Recebida requisição para deletar imagem: ${id}`);
 
   try {
     // Busca a imagem na tabela para pegar o caminho no storage
@@ -169,8 +170,11 @@ app.delete('/images/:id', async (req, res) => {
       .single();
 
     if (fetchError || !image) {
+      console.log(`Imagem ${id} não encontrada`);
       return res.status(404).json({ error: 'Imagem não encontrada' });
     }
+
+    console.log(`Encontrada imagem: ${image.url}`);
 
     // Remove do storage
     const { error: storageError } = await supabase.storage
@@ -179,6 +183,8 @@ app.delete('/images/:id', async (req, res) => {
 
     if (storageError) {
       console.error('Erro ao remover do storage:', storageError);
+    } else {
+      console.log(`Imagem ${image.url} removida do storage`);
     }
 
     // Remove do banco
@@ -187,8 +193,12 @@ app.delete('/images/:id', async (req, res) => {
       .delete()
       .eq('id', id);
 
-    if (deleteError) throw deleteError;
+    if (deleteError) {
+      console.error('Erro ao remover do banco:', deleteError);
+      throw deleteError;
+    }
 
+    console.log(`Imagem ${id} deletada com sucesso`);
     res.status(200).json({ message: 'Imagem deletada com sucesso' });
 
   } catch (error) {
