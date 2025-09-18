@@ -1,19 +1,23 @@
 {
-  "name": "conectar-supabase",
+  "name": "discernopet-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "API para upload de imagens do DiscernoPet",
+  "main": "api.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node api.js",
+    "dev": "nodemon api.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@supabase/supabase-js": "^2.50.0",
+    "express": "^4.18.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "multer": "^2.0.1"
+    "multer": "^1.4.5",
+    "dotenv": "^16.3.1",
+    "@supabase/supabase-js": "^2.33.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
