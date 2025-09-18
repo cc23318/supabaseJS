@@ -3,16 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
-const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-
-// Configure o multer para usar a pasta tmp do Render
-const upload = multer({ 
-  dest: process.env.NODE_ENV === 'production' ? '/tmp/uploads' : 'uploads/'
-});
-
+const upload = multer({ dest: 'uploads/' });
 const port = process.env.PORT || 3000;
 
 // Configuração do Supabase
@@ -27,10 +21,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check para o Render
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
-});
 
 // Rota de teste
 app.get('/conexao', (req, res) => {
@@ -400,12 +390,10 @@ app.get('/profile-image/:user_id', async (req, res) => {
   }
 });
 
-// Inicia o servidor (modificado para Render)
-const server = app.listen(port, '0.0.0.0', () => {
+// Inicia o servidor *localhost*
+app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
-  console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Teste as rotas:`);
-  console.log(`- GET  https://supabasejs.onrender.com/health`);
+  console.log(`Teste as rotas no Render:`);
   console.log(`- GET  https://supabasejs.onrender.com/conexao`);
   console.log(`- GET  https://supabasejs.onrender.com/images`);
   console.log(`- POST https://supabasejs.onrender.com/upload`);
