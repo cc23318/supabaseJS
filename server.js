@@ -410,4 +410,4 @@ const server = app.listen(port, '0.0.0.0', () => {
   console.log(`- GET  https://supabasejs.onrender.com/images`);
   console.log(`- POST https://supabasejs.onrender.com/upload`);
   console.log(`- DELETE https://supabasejs.onrender.com/images/:id`);
-}); 
+});
