@@ -27,7 +27,7 @@ app.get('/conexao', (req, res) => {
   res.status(200).json({ status: 'Conexão estabelecida com sucesso!' });
 });
 
-// Rota para listar imagens com análise e localização
+// Rota para listar imagens - CORRIGIDA
 app.get('/images', async (req, res) => {
   try {
     console.log('Buscando imagens no banco de dados...');
@@ -44,48 +44,16 @@ app.get('/images', async (req, res) => {
     const imagesWithUrls = await Promise.all(images.map(async (image) => {
       console.log(`Processando imagem ${image.id} - ${image.url}`);
       
-      // Verifica se a URL já é uma URL pública (começa com http)
-      if (image.url.startsWith('http')) {
-        console.log(`Imagem ${image.id} já tem URL pública: ${image.url}`);
-        return {
-          id: image.id,
-          url: image.url,
-          user_id: image.user_id,
-          created_at: image.created_at,
-          latitude: image.latitude || null,
-          longitude: image.longitude || null,
-          analysis: image.analysis || null
-        };
-      }
-
-      // Se não for URL pública, gera URL a partir do caminho do arquivo
-      console.log(`Gerando URL assinada para: ${image.url}`);
-      const { data: signedUrl, error: urlError } = await supabase
-        .storage
+      // SEMPRE gera URL pública a partir do caminho do arquivo
+      const { data: publicUrlData } = supabase.storage
         .from('imagens')
-        .createSignedUrl(image.url, 3600); // 1 hora
+        .getPublicUrl(image.url);
 
-      if (urlError) {
-        console.error(`Erro ao gerar URL para imagem ${image.id}:`, urlError);
-        // Tenta criar uma URL pública alternativa
-        const { data: publicUrlData } = supabase.storage
-          .from('imagens')
-          .getPublicUrl(image.url);
-        
-        return {
-          id: image.id,
-          url: publicUrlData.publicUrl,
-          user_id: image.user_id,
-          created_at: image.created_at,
-          latitude: image.latitude || null,
-          longitude: image.longitude || null,
-          analysis: image.analysis || null
-        };
-      }
+      console.log(`URL pública gerada para: ${image.url} -> ${publicUrlData.publicUrl}`);
 
       return {
         id: image.id,
-        url: signedUrl.signedUrl,
+        url: publicUrlData.publicUrl, // SEMPRE usar URL pública
         user_id: image.user_id,
         created_at: image.created_at,
         latitude: image.latitude || null,
