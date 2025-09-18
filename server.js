@@ -405,9 +405,9 @@ const server = app.listen(port, '0.0.0.0', () => {
   console.log(`Servidor rodando na porta ${port}`);
   console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Teste as rotas:`);
-  console.log(`- GET  https://seu-app.onrender.com/health`);
-  console.log(`- GET  https://seu-app.onrender.com/conexao`);
-  console.log(`- GET  https://seu-app.onrender.com/images`);
-  console.log(`- POST https://seu-app.onrender.com/upload`);
-  console.log(`- DELETE https://seu-app.onrender.com/images/:id`);
+  console.log(`- GET  https://supabasejs.onrender.com/health`);
+  console.log(`- GET  https://supabasejs.onrender.com/conexao`);
+  console.log(`- GET  https://supabasejs.onrender.com/images`);
+  console.log(`- POST https://supabasejs.onrender.com/upload`);
+  console.log(`- DELETE https://supabasejs.onrender.com/images/:id`);
 }); 
